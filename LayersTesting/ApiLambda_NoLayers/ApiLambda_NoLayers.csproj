@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <AWSProjectType>Lambda</AWSProjectType>
+    <!-- This property makes the build directory similar to a publish directory and helps the AWS .NET Lambda Mock Test Tool find project dependencies. -->
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <!-- Generate ready to run images during publishing to improvement cold starts. -->
+    <PublishReadyToRun>true</PublishReadyToRun>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Amazon.Lambda.AspNetCoreServer.Hosting" Version="1.6.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common.Dtos\Common.Dtos.csproj" />
+    <ProjectReference Include="..\DataLayer\DataLayer.csproj" />
+  </ItemGroup>
+
+	<Choose>
+		<When Condition=" '$(Configuration)' == 'Debug' ">
+			<ItemGroup>
+				<PackageReference Include="AWSSDK.SSO" Version="3.7.200.2" />
+				<PackageReference Include="AWSSDK.SSOOIDC" Version="3.7.301.15" />
+			</ItemGroup>
+		</When>
+	</Choose>
+
+	<Target Name="PackageLambdaBuildStep" AfterTargets="Build" Condition="'$(PackageLambdas)'=='True' And '$(Configuration)'=='Release'">
+		<Message Importance="High" Text="Packaging Lambda into ZIP" />
+		<Exec Command='dotnet-lambda package -f $(TargetFramework) --disable-interactive true --no-build --configuration Release' />
+		<MakeDir Directories="$(ProjectDir)..\..\build\packages" />
+		<Copy SourceFiles=".\bin\$(Configuration)\$(TargetFramework)\$(ProjectName).zip" DestinationFolder="$(ProjectDir)..\..\build\packages" />
+	</Target>
+</Project>
