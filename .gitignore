@@ -1,0 +1,26 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+.vs/
+**/*.user
+bin/
+obj/
+TestResults/
+launchSettings.json
+**/packages/*
+Stylecop.cache
+.gradle/
+.idea/
+build/
+*.nupkg
+tests/out/
+tests/tests.iml
+*.feature.cs
+stack-template-output.yaml
+*.swp
+*.donkey
+**/node_modules/
+.vscode/
+*-artifact/
+artifact/
